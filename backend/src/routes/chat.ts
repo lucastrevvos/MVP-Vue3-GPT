@@ -1,16 +1,24 @@
 import { Router } from "express";
 import { chatWithGPT } from "../services/openaiService";
+import ChatHistory from "../models/ChatHistory";
 
 const router = Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, userId } = req.body;
 
-    if (!message)
-      return res.status(400).json({ error: "Mensagem obrigatória" });
+    if (!message || !userId)
+      return res.status(400).json({ error: "Mensagem e UserId obrigatórias" });
 
     const response = await chatWithGPT(message);
+
+    await ChatHistory.create({
+      userId,
+      question: message,
+      response,
+    });
+
     res.json({ response });
   } catch (error) {
     console.error(error);

@@ -13,6 +13,7 @@ const password = ref("");
 const login = async () => {
   try {
     await authStore.loginWithEmail(email.value, password.value);
+    router.push("/dashboard");
   } catch (error: any) {
     alert("Erro ao fazer login: " + error.message);
   }
@@ -35,6 +36,7 @@ const register = async () => {
 
 const loginGoogle = async () => {
   await authStore.loginWithGoogle();
+  router.push("/dashboard");
 };
 </script>
 <template>

@@ -16,6 +16,9 @@ const auth = useAuthStore();
       class="text-green-600"
       >Dashboard</RouterLink
     >
+    <RouterLink v-if="auth.isAuthenticated" to="/chat" class="text-pink-600">
+      Chat
+    </RouterLink>
   </nav>
   <RouterView />
 </template>
