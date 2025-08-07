@@ -15,3 +15,15 @@ export const chatWithGPT = async (message: string) => {
 
   return res.data.response;
 };
+
+export const getChatHistory = async () => {
+  const auth = useAuthStore();
+
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_BASE_URL}/api/chat/history/${
+      auth.user?.uid || "anon"
+    }`
+  );
+
+  return res.data.history;
+};

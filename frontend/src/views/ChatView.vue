@@ -1,17 +1,27 @@
 <script setup lang="ts">
-import { chatWithGPT } from "@/services/openai";
-import { ref } from "vue";
+import { chatWithGPT, getChatHistory } from "@/services/openai";
+import { onMounted, ref } from "vue";
 
 const input = ref("");
 const loading = ref(false);
 const response = ref("");
+const history = ref<{ question: string; response: string }[]>([]);
 
 const send = async () => {
   loading.value = true;
   response.value = await chatWithGPT(input.value);
+  await loadHistory();
   loading.value = false;
   input.value = "";
 };
+
+const loadHistory = async () => {
+  history.value = await getChatHistory();
+};
+
+onMounted(() => {
+  loadHistory();
+});
 </script>
 
 <template>
@@ -35,5 +45,26 @@ const send = async () => {
     <div v-else class="bg-gray-100 p-4 rounded whitespace-pre-wrap">
       {{ response }}
     </div>
+  </div>
+
+  <hr class="my-6" />
+
+  <div class="p-8 space-y-4">
+    <h2 class="text-x1 font-semibold text-gray-700 mb-4">Histórico recente</h2>
+    <ul class="space-y-4">
+      <li
+        v-for="(item, index) in history"
+        :key="index"
+        class="bg-gray-100 p-4 rounded"
+      >
+        <p>
+          <strong class="text-blue-700"> Pergunta: </strong>{{ item.question }}
+        </p>
+        <br />
+        <p>
+          <strong class="text-blue-700">Resposta: </strong>{{ item.response }}
+        </p>
+      </li>
+    </ul>
   </div>
 </template>
