@@ -26,4 +26,21 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/history/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) return res.status(400).json({ error: "userId obrigatório" });
+
+    const history = await ChatHistory.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    res.json({ history });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar histórico" });
+  }
+});
+
 export default router;
