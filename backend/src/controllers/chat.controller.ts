@@ -10,6 +10,9 @@ export async function postChat(req: Request, res: Response) {
 
 export async function getChatHistory(req: Request, res: Response) {
   const { userId } = req.params;
-  const history = await getHistory(userId);
-  return res.json({ history });
+  const page = Number(req.query.page ?? 1);
+  const limit = Number(req.query.limit ?? 20);
+
+  const history = await getHistory(userId, { page, limit });
+  return res.json(history);
 }
