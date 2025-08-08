@@ -2,28 +2,29 @@ import axios from "axios";
 
 import { useAuthStore } from "@/stores/authStore";
 
-export const chatWithGPT = async (message: string) => {
-  const auth = useAuthStore();
-
-  const res = await axios.post(
-    `${import.meta.env.VITE_API_BASE_URL}/api/chat`,
-    {
-      message,
-      userId: auth.user?.uid || "anon",
-    }
-  );
-
-  return res.data.response;
-};
+const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL });
 
 export const getChatHistory = async () => {
   const auth = useAuthStore();
 
-  const res = await axios.get(
-    `${import.meta.env.VITE_API_BASE_URL}/api/chat/history/${
-      auth.user?.uid || "anon"
-    }`
+  const { data } = await api.get(
+    `/api/chat/history/${auth.user?.uid || "anon"}`,
+    {
+      params: { page: 1, limit: 20 },
+    }
   );
 
-  return res.data.history;
+  const arr = Array.isArray(data) ? data : data.history ?? data.items ?? [];
+  return Array.isArray(arr) ? arr : [];
+};
+
+export const chatWithGPT = async (message: string) => {
+  const auth = useAuthStore();
+
+  const { data } = await api.post(`/api/chat`, {
+    message,
+    userId: auth.user?.uid || "anon",
+  });
+
+  return data.response;
 };
