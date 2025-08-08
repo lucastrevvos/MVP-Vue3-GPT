@@ -1,9 +1,9 @@
-import z from "zod";
+import { z } from "zod";
 
 export const createChatSchema = z.object({
   body: z.object({
     userId: z.string().min(1, "userId é obrigatório"),
-    messsage: z.string().min(1, "message é obrigatória").max(4000),
+    message: z.string().min(1, "message é obrigatória").max(4000),
   }),
   params: z.object({}).optional(),
   query: z.object({}).optional(),
